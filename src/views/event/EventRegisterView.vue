@@ -5,35 +5,35 @@ import { type EventItem } from '@/type'
 // const event = ref<EventItem | null> (null)
 import type { PropType } from 'vue';
 import {useRouter} from 'vue-router'
-//import {useMessageStore} from '@/stores/message';
-//const store = useMessageStore()
+import {useMessageStore} from '@/stores/message';
+const store = useMessageStore()
 
 
 
 const props = defineProps ({
 event: {
-   type: Object as PropType<EventItem>,
+    type: Object as PropType<EventItem>,
         require: true
 }
 })
 const router = useRouter()
 function register() {
-    router.push({
-        name: 'event-detail',
-        params: {
-            id: props.event?.id
-        }
+   // router.push({
+     //   name: 'event-detail',
+       // params: {
+         //   id: props.event?.id
+        //}
     //})
-   // store.updateMessage('You are successfully registered for ' +props.event?.title)
-//setTimeout(() => {
-  //  store.resetMessage()
-//},3000)
-//router.push({
-  //  name: 'event-detail',
-    //params: {
-      //  id: props.event?.id
-    //}
-//})
+    store.updateMessage('You are successfully registered for ' +props.event?.title)
+setTimeout(() => {
+    store.resetMessage()
+},3000)
+router.push({
+    name: 'event-detail',
+    params: {
+        id: props.event?.id
+    }
+})
 }
 // const props = defineProps({
 //     id: String

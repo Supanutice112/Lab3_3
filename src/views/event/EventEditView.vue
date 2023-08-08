@@ -7,13 +7,43 @@ import type { PropType } from 'vue';
 // const props = defineProps({
 //     id: String
 // })
-defineProps({
-    event: {
-        type: Object as PropType<EventItem>,
-            require: true
-    }
+import {useRouter} from 'vue-router'
+import {useMessageStore} from '@/stores/message';
+const store = useMessageStore()
+
+// defineProps({
+//     event: {
+//         type: Object as PropType<EventItem>,
+//             require: true
+//     }
+// })
+
+const props = defineProps ({
+event: {
+    type: Object as PropType<EventItem>,
+        require: true
+}
 })
 
+const router = useRouter()
+function edit() {
+   // router.push({
+     //   name: 'event-detail',
+       // params: {
+         //   id: props.event?.id
+        //}
+    //})
+    store.updateMessage('You are successfully Edit for ' +props.event?.title)
+setTimeout(() => {
+    store.resetMessage()
+},3000)
+router.push({
+    name: 'event-detail',
+    params: {
+        id: props.event?.id
+    }
+})
+}
     // EventService.getEventByID(Number(props.id)).then((response) => {
     //     event.value = response.data
     // }).catch(error =>{
@@ -31,4 +61,6 @@ defineProps({
         </div> -->
         <p>Edit the event here</p>
     <!-- </div> -->
+    <button @click="edit">Edit</button>
+
 </template>
