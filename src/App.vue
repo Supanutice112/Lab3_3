@@ -9,6 +9,7 @@ const {message} = storeToRefs(store)
 
 <template>
   <header>
+    <h1>Supanut Maneeyot</h1>
     <div id ="flashMessage" v-if="message">
       <h4>{{message}}</h4>
     </div>
