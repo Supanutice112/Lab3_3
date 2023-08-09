@@ -19,7 +19,6 @@ defineProps({
 // }).catch(error => {
 //     console.log(error)
 // })
-
 </script>
 <template>
     <div v-if="event">
