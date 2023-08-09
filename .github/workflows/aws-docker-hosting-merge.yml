@@ -31,8 +31,8 @@ jobs:
           tags: supanuticeza/se331-lab06:latset
       - 
         name: copy file via ssh password
-          user: appleboy/scp-action@v0.1.4
-          with:
+        uses: appleboy/scp-action@v0.1.4
+        with:
           host: ${{ secrets.HOST_SERVER }}
           username: ${{ secrets.HOST_USER_NAME }}
           key: ${{ secrets.HOST_SSH_PRIVATE_KEY }}
