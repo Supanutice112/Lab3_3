@@ -54,4 +54,3 @@ const events = ref<EventItem[]>([
   align-items: center;
 } */
 </style>
-s
