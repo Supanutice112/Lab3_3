@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import Uploader from 'vue-media-upload'
 import { ref } from 'vue';
+
 interface Props{
     modelValue?: string[]
 }
