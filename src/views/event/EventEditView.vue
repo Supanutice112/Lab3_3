@@ -7,49 +7,34 @@ import type { PropType } from 'vue';
 // const props = defineProps({
 //     id: String
 // })
-import {useRouter} from 'vue-router'
-import {useMessageStore} from '@/stores/message';
-const store = useMessageStore()
-
-// defineProps({
-//     event: {
-//         type: Object as PropType<EventItem>,
-//             require: true
-//     }
-// })
-
-const props = defineProps ({
-event: {
-    type: Object as PropType<EventItem>,
-        require: true
-}
-})
-
-const router = useRouter()
-function edit() {
-   // router.push({
-     //   name: 'event-detail',
-       // params: {
-         //   id: props.event?.id
-        //}
-    //})
-    store.updateMessage('You are successfully Edit for ' +props.event?.title)
-setTimeout(() => {
-    store.resetMessage()
-},3000)
-router.push({
-    name: 'event-detail',
-    params: {
-        id: props.event?.id
+import { useRouter } from 'vue-router'
+import { useMessageStore } from '@/stores/message'
+const props = defineProps({
+    event: {
+        type: Object as PropType<EventItem>,
+            require: true
     }
 })
-}
+
     // EventService.getEventByID(Number(props.id)).then((response) => {
     //     event.value = response.data
     // }).catch(error =>{
     //     console.log(error)
     // })
-
+    const router = useRouter()
+const store = useMessageStore()
+function edit(){
+    store.updateMessage(props.event?.title + 'The Data has been updated')
+    setTimeout(() => {
+        store.resetMessage()
+    },3000)
+    router.push({
+        name: 'event-detail',
+        params: {
+            id: props.event?.id
+        }
+    })
+}
 </script>
 <template>
     <!-- <div v-if="event">
@@ -60,7 +45,6 @@ router.push({
             <router-link :to="{name: 'event-edit', params:{id}}">Edit</router-link>
         </div> -->
         <p>Edit the event here</p>
+        <button @click="edit">Edit</button>
     <!-- </div> -->
-    <button @click="edit">Edit</button>
-
 </template>

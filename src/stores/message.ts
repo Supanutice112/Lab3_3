@@ -1,14 +1,14 @@
-import {defineStore, mapStores} from 'pinia'
-export const useMessageStore = defineStore('message', {
+import { defineStore } from "pinia";
+export const useMessageStore = defineStore('message',{
     state: () => ({
-        message: ' ' as string
+        message: '' as string
     }),
-    actions: {
-        updateMessage(message: string) {
-            this.message = message
-        },
-        resetMessage() {
-            this.message = ''
-        }
+actions: {
+    updateMessage(message: string){
+        this.message = message
+    },
+    resetMessage(){
+        this.message = ''
+    }
     }
 })

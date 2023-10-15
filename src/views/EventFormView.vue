@@ -1,131 +1,82 @@
 <script setup lang="ts">
-import { RouterLink, RouterView } from 'vue-router'
-import { storeToRefs } from 'pinia';
-import { useMessageStore } from './stores/message';
-import { useAuthStore } from './stores/auth';
-import { useRouter } from 'vue-router';
-const authStore = useAuthStore()
-const router = useRouter()
+import type { EventItem } from '@/type'
+import { ref } from 'vue'
+import EventService from '@/services/EventService'
+import { useRouter } from 'vue-router'
+import { useMessageStore } from '@/stores/message'
+import BaseInput from '@/components/BaseInput.vue'
+import BaseSelect from '@/components/BaseSelect.vue'
+import { type EventOrganizer } from '@/type'
+import OrganizerService from '@/services/OrganizerService'
+import ImageUpload from '@/components/ImageUpload.vue'
+
 const store = useMessageStore()
-const { message } = storeToRefs(store)
-const token = localStorage.getItem('token')
-const user = localStorage.getItem('user')
-if (token && user) {
-  authStore.reload(token,JSON.parse(user))
-}else{
-  authStore.logout()
-}
 
-function logout() {
-  authStore.logout()
-  router.push({ name: 'login'})
+const router = useRouter()
+function saveEvent() {
+  EventService.saveEvent(event.value)
+    .then((response) => {
+      console.log(response.data)
+      router.push({
+        name: 'event-detail',
+        params: { id: response.data.id }
+      })
+      store.updateMessage('You are successfully add a new event for' + response.data.title)
+      setTimeout(() => {
+        store.resetMessage()
+      }, 3000)
+    })
+    .catch(() => {
+      router.push({ name: 'network-error' })
+    })
 }
+const event = ref<EventItem>({
+  id: 0,
+  category: '',
+  title: '',
+  description: '',
+  location: '',
+  date: '',
+  time: '',
+  organizer: { id: 0, name: '' },
+  images: [],
+  petsAllowed: true
+})
 
+const organizers = ref<EventOrganizer[]>([])
+OrganizerService.getOrganizers()
+  .then((response) => {
+    organizers.value = response.data
+  })
+  .catch(() => {
+    router.push({ name: 'network-error' })
+  })
 </script>
-
 <template>
-  <header class="max-h-screen leading-normal">
-    <h1>Supanut Maneeyot</h1>
-    <div id="flashMessage" v-if="message" >
-      <h4 class="text-xl">{{  message  }}</h4>
-    </div>
-      <nav class="p-8 font-bold">
-        <nav class="flex">
-          <ul v-if="!authStore.currentUserName" class="flex navbar-nav ml-auto">
-            <li class="nav-item px-2">
-              <router-link to="/register" class="nav-link">
-                <font-awesome-icon icon="user-plus" /> Register
-              </router-link>
-            </li>
-            <li class="nav-item px-2">
-              <router-link to="/register" class="nav-link">
-                  <font-awesome-icon icon="user-plus" />Sign Up
-              </router-link>
-            </li>
-            <li class="nav-item px-2">
-              <router-link to="/login" class="nav-link">
-                  <font-awesome-icon icon="sign-in-alt" />Login
-              </router-link>
-            </li>
-          </ul>
-          <ul v-if="authStore.currentUserName" class="flex navbar-nav ml-auto">
-            <li class="nav-item px-2">
-              <router-link to ="/profile" class="nav-link">
-                <font-awesome-icon icon="user" />
-                {{ authStore.currentUserName }}
-              </router-link>
-            </li>
-            <li class="nav-item px-2">
-              <a class = "nav-link hover:cursor-pointer" @click="logout">
-                <font-awesome-icon icon="sign-out-alt" />LogOut
-              </a>
-            </li>
-          </ul>
-        </nav>
-        <RouterLink :to="{name: 'event-list'}" class="text-black-500  active:text-green-600 focus:text-green-600">Home</RouterLink> |
-        <RouterLink to = "/about">About</RouterLink>
-        <span v-if="authStore.isAdmin"> |
-          <RouterLink :to="{name: 'add-event'}">New Event</RouterLink>
-        </span>
-        <RouterLink :to="{name: 'add-organizer'}" class="text-black-500  active:text-green-600 focus:text-green-600">New Organizer</RouterLink> |
-        <RouterLink :to="{name: 'organizer-list'}" class="text-black-500  active:text-green-600 focus:text-green-600">Organizer</RouterLink> |
-        <RouterLink :to="{name: 'student-info'}" class="text-black-500  active:text-green-600 focus:text-green-600">student</RouterLink>
-      </nav>
-  </header>
+  <div>
+    <h1>Create an event</h1>
+    <form @submit.prevent="saveEvent">
+      <BaseInput v-model="event.category" type="text" label="Category" />
+      <h3>Name & describe your event</h3>
 
-  <RouterView />
+      <BaseInput v-model="event.title" type="text" label="Title" />
+
+      <h3>Where is your event?</h3>
+
+      <BaseInput v-model="event.location" type="text" label="Location" />
+      <h3>Who is your organizer?</h3>
+      <BaseSelect v-model="event.organizer.id" label="Organizer" 
+          :options="organizers" />
+          <h3>The image of the Event</h3>
+          <ImageUpload v-model="event.images" />
+      <button type="submit">Submit</button>
+    </form>
+
+    <pre>{{ event }}</pre>
+  </div>
 </template>
 
 <style>
-#app{
-  font-family: Avenir, Arial, Helvetica, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-}
-
-/* header {
-  line-height: 1.5;
-  max-height: 100vh;
-} */
-
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
-}
-
-/* nav {
-  padding: 30px;
-} */
-
-/* nav a.router-link-exact-active {
-  color: #42b983;
-} */
-
-
-/* nav a {
-  font-weight: bold;
-  color: #2c3e50;
-} */
-
-/* h4{
-  font-size: 20px;
-} */
-
-@keyframes yellowfade{
-  from{
-    background: yellow;
-  }
-  to{
-    background: transparent;
-
-  }
-}
-
-#flashMessage{
-  animation: yellowfade 3s ease-in-out;
-}
 b,
 strong {
   font-weight: bolder;
